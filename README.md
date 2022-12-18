@@ -7,3 +7,7 @@ https://www.mokosmart.com/iot-gateway/
 
 nRF52840
     https://developers.home.google.com/matter/vendors/nordic-semiconductor
+
+
+EVK-NORA-B1 ->the Nordic Semiconductor nRF5340 
+
