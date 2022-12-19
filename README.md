@@ -11,3 +11,5 @@ nRF52840
 
 EVK-NORA-B1 ->the Nordic Semiconductor nRF5340 
 
+https://content.u-blox.com/sites/default/files/EVK-NORA-B1_UserGuide_UBX-20030319.pdf
+
