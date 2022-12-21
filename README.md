@@ -13,3 +13,8 @@ EVK-NORA-B1 ->the Nordic Semiconductor nRF5340
 
 https://content.u-blox.com/sites/default/files/EVK-NORA-B1_UserGuide_UBX-20030319.pdf
 
+
+
+
+GitHub - EVK-NORA-B1 requires a unique board support package (BSP)
+https://github.com/u-blox/u-blox-sho-OpenCPU
