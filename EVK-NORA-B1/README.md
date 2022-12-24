@@ -18,3 +18,7 @@ https://content.u-blox.com/sites/default/files/EVK-NORA-B1_UserGuide_UBX-2003031
 
 GitHub - EVK-NORA-B1 requires a unique board support package (BSP)
 https://github.com/u-blox/u-blox-sho-OpenCPU
+
+
+printk
+https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/gs_testing.html#how-to-connect-with-putty
