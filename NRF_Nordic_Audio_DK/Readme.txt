@@ -4,5 +4,12 @@ https://www.nordicsemi.com/Products/Development-hardware/nRF5340-Audio-DK?utm_so
 
 https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/applications/nrf5340_audio/README.html
 
+
+nrf5340_audio
+
 Build target
 	nrf5340_audio_dk_nrf5340_cpuapp
+	
+	
+	
+nRF5340 Audio DK
