@@ -13,3 +13,7 @@ Build target
 	
 	
 nRF5340 Audio DK
+
+
+Audio 
+	CS47L63
