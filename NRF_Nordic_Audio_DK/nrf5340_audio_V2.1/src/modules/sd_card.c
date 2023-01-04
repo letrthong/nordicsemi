@@ -291,5 +291,82 @@ int  count_total_files(char *path ){
 }
 
 int delete_file(char const *const filename){
+	int ret =  sd_card_write(filename, '', 0);
+	if(ret == 0){
+		 
+		if (!sd_init_success) {
+			return -ENODEV;
+		}
 
+		ret =  fs_rename(filename, '.delete');
+	}
+
+	return ret;
 }
+
+ 
+int  get_block_of_file(char const *const filename, size_t* size_of_block){
+	struct fs_file_t f_entry;
+	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
+	int ret;
+
+	if (!sd_init_success) {
+		return -ENODEV;
+	}
+
+	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN) {
+		LOG_ERR("Filename is too long");
+		return -FR_INVALID_NAME;
+	}
+
+	strcat(abs_path_name, filename);
+	fs_file_t_init(&f_entry);
+
+	ret = fs_open(&f_entry, abs_path_name, FS_O_READ);
+	if (ret) {
+		LOG_ERR("Open file failed");
+		return ret;
+	}
+     
+	int total_bytes = 0;
+	int size = 512;
+	char buffer[size] ={};
+	while(true){
+		ret = fs_read(&f_entry, buffer,  size);
+		if (ret < 0) {
+			LOG_ERR("Read file failed");
+			break;
+		}
+
+		if (ret == 0 ) {
+			LOG_ERR("End file");
+			break;
+		}
+
+		total_bytes =  = total_bytes + ret;
+
+	}
+	
+
+	*size_of_block = (total_bytes/size);
+	 
+	ret = fs_close(&f_entry);
+	if (ret) {
+		LOG_ERR("Close file failed");
+		return ret;
+	}
+
+	return 0;
+}
+
+
+int read_block_of_file(char const *const filename, char *const data, size_t *size, size_t size_of_block, int block){
+	int ret = 0;
+	return ret;
+}
+
+int write_block_of_file(char const *const filename, char *const data, size_t *size){
+	int ret = 0;
+	return ret;
+}
+
