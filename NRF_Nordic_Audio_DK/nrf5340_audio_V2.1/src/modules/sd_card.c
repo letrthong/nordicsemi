@@ -333,6 +333,8 @@ int  get_block_of_file(char const *const filename, size_t* size_of_block){
 	char buffer[size] ={};
 	while(true){
 		ret = fs_read(&f_entry, buffer,  size);
+		
+		LOG_DBG("get_block_of_files size=%d\n", ret);
 		if (ret < 0) {
 			LOG_ERR("Read file failed");
 			break;
@@ -347,7 +349,6 @@ int  get_block_of_file(char const *const filename, size_t* size_of_block){
 
 	}
 	
-
 	*size_of_block = (total_bytes/size);
 	 
 	ret = fs_close(&f_entry);
@@ -369,4 +370,3 @@ int write_block_of_file(char const *const filename, char *const data, size_t *si
 	int ret = 0;
 	return ret;
 }
-
