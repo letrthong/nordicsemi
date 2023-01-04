@@ -60,4 +60,8 @@ int sd_card_read(char const *const filename, char *const data, size_t *size);
  */
 int sd_card_init(void);
 
+
+int count_total_files(char *path );
+int delete_file(char const *const filename);
+
 #endif /* _SD_CARD_H_ */

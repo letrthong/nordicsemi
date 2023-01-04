@@ -226,3 +226,70 @@ int sd_card_init(void)
 
 	return 0;
 }
+
+
+int  count_total_files(char *path ){
+	int ret = 0;
+	int count = 0;
+	struct fs_dir_t dirp;
+	static struct fs_dirent entry;
+	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
+
+	if (!sd_init_success) {
+		return -ENODEV;
+	}
+
+	LOG_DBG("sd_card_list_files\n");
+	fs_dir_t_init(&dirp);
+
+	if (path == NULL) {
+		ret = fs_opendir(&dirp, sd_root_path);
+		if (ret) {
+			LOG_ERR("Open SD card root dir failed");
+			return count;
+		}
+	} else {
+		if (strlen(path) > CONFIG_FS_FATFS_MAX_LFN) {
+			LOG_ERR("Path is too long");
+			//return -FR_INVALID_NAME;
+			return count;
+		}
+
+		strcat(abs_path_name, path);
+
+		ret = fs_opendir(&dirp, abs_path_name);
+		if (ret) {
+			LOG_ERR("Open assigned path failed");
+			return count;
+		}
+	}
+	while (true) {
+		ret = fs_readdir(&dirp, &entry);
+		if (ret) {
+			return count;
+		}
+
+		if (entry.name[0] == 0) {
+			break;
+		}
+
+		if (entry.type == FS_DIR_ENTRY_DIR) {
+			LOG_INF("[DIR ] %s", entry.name);
+		} else {
+			LOG_INF("[FILE] %s", entry.name);
+			count =  count + 1;
+		}
+	}
+
+	ret = fs_closedir(&dirp);
+	if (ret) {
+		LOG_ERR("Close SD card root dir failed");
+		return count;
+	}
+
+	return 0;
+}
+
+int delete_file(char const *const filename){
+
+}
