@@ -349,15 +349,15 @@ int  get_block_of_file(char const *const filename, size_t* size_of_block){
 
 	}
 	
-	*size_of_block = (total_bytes/size);
-	 
+	 int blocks = (total_bytes/size);
+	LOG_DBG("get_block_of_files block=%d\n", blocks);
 	ret = fs_close(&f_entry);
 	if (ret) {
 		LOG_ERR("Close file failed");
 		return ret;
 	}
 
-	return 0;
+	return blocks;
 }
 
 
