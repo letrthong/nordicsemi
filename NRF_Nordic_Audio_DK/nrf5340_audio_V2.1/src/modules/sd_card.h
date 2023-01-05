@@ -64,15 +64,13 @@ int sd_card_init(void);
 int count_total_files(char *path );
 int delete_file(char const *const filename);
 
-int get_block_of_file(char const *const filename, size_t* size_of_block);
+int read_block_of_file(char const *const filename, size_t* size_of_block);
 
 /*  blocks= 5, size of block = 128 bytes
 ---------------------------------------------------
 |    block 1 | block2|  block 3| block 4 | block5   |
 -----------------------------------------------------
 */
-//int read_block_of_file(char const *const filename, char *const data, size_t *size, size_t size_of_block, int block);
-
-int write_block_of_file(char const *const filename, char *const data, size_t *size);
+ 
 
 #endif /* _SD_CARD_H_ */

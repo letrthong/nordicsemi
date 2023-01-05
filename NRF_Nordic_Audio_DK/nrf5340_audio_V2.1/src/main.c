@@ -201,7 +201,7 @@ void main(void)
 		ERR_CHK(ret);
 	}
 
-	LOG_INF("sdcard\n");
+	LOG_INF("sdcard MUST audio in SD card\n");
 	if (board_rev.mask & BOARD_VERSION_VALID_MSK_SD_CARD) {
 		ret = sd_card_init();
 		if (ret != -ENODEV) {
@@ -209,7 +209,14 @@ void main(void)
 			ERR_CHK(ret);
 			sd_card_list_files("audio");
 			size_t  size_of_block = 512;
-			get_block_of_file( "audio/Quan-Nua-Khuya-Phuong-Diem-Hanh.mp3", &size_of_block);
+			delete_file("audio/ThongLT.mp3");
+
+			size_t  size = 5;
+			sd_card_write("audio/write.txt",  "Hello", &size);
+
+			read_block_of_file( "audio/Quan-Nua-Khuya-Phuong-Diem-Hanh.mp3", &size_of_block);
+
+			
 		}else{
 			LOG_INF("BOARD_VERSION_VALID_MSK_SD_CARD ERROR\n");
 		}

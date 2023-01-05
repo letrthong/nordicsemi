@@ -291,22 +291,29 @@ int  count_total_files(char *path ){
 }
 
 int delete_file(char const *const filename){
-	char data[1];
-	int ret =  sd_card_write(filename, data, 0);
-	if(ret == 0){
-		 
-		if (!sd_init_success) {
-			return -ENODEV;
-		}
+	 
+	struct fs_file_t f_entry;
+	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
+	int ret;
 
-		//ret =  fs_rename(filename, '.delete');
+	if (!sd_init_success) {
+		return -ENODEV;
 	}
 
+	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN) {
+		LOG_ERR("Filename is too long");
+		return -FR_INVALID_NAME;
+	}
+
+	strcat(abs_path_name, filename);
+	LOG_INF(" delete_file [FILE] %s", abs_path_name);
+	fs_unlink(abs_path_name);
+	 
 	return ret;
 }
 
  
-int  get_block_of_file(char const *const filename, size_t* size_of_block){
+int  read_block_of_file(char const *const filename, size_t* size_of_block){
 	LOG_INF(" get_block_of_file[FILE] %s", filename);
 	struct fs_file_t f_entry;
 	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
@@ -331,28 +338,28 @@ int  get_block_of_file(char const *const filename, size_t* size_of_block){
 	}
      
 	int total_bytes = 0;
-	int size = 512;
+	int size = *size_of_block;
 	char buffer[size];
 	int total_blocks = 0;
+ 
 	while(true){
-		ret = fs_read(&f_entry, buffer,  size);
+		size_t size_ret = fs_read(&f_entry, buffer,  size);
 		
 		//LOG_INF("get_block_of_files size=%d\n", ret);
-		if (ret < 0) {
+		if (size_ret < 0) {
 			LOG_ERR("Read file failed");
 			break;
 		}
 
 		total_blocks = total_blocks + 1;
-		if (ret == 0 ) {
+		if (size_ret == 0 ) {
 			LOG_INF("End file total_block=%d\n", total_blocks);
 			break;
-		}else{
-			sd_card_write("audio/ThongLT.mp3", char const *const data, size_t *size);
+		} else{
+			//sd_card_write("audio/ThongLT.mp3", buffer, &size_ret);
 		}
 
-		total_bytes = total_bytes + ret;
-
+		total_bytes = total_bytes + size_ret;
 	}
 	
 	 
@@ -365,15 +372,4 @@ int  get_block_of_file(char const *const filename, size_t* size_of_block){
 	}
 
 	return total_blocks;
-}
-
-
-// int read_block_of_file(char const *const filename, char *const data, size_t *size, size_t size_of_block, int block){
-// 	int ret = 0;
-// 	return ret;
-// }
-
-int write_block_of_file(char const *const filename, char *const data, size_t *size){
-	int ret = 0;
-	return ret;
 }
