@@ -60,17 +60,10 @@ int sd_card_read(char const *const filename, char *const data, size_t *size);
  */
 int sd_card_init(void);
 
-
+// --[Start] Add  05-01-2023------------------------
 int count_total_files(char *path );
 int delete_file(char const *const filename);
-
 int read_block_of_file(char const *const filename, size_t* size_of_block);
 
-/*  blocks= 5, size of block = 128 bytes
----------------------------------------------------
-|    block 1 | block2|  block 3| block 4 | block5   |
------------------------------------------------------
-*/
- 
-
+// --[End] Add  05-01-2023------------------------
 #endif /* _SD_CARD_H_ */

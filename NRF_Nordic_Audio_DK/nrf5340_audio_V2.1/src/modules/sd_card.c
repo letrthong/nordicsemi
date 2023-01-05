@@ -227,7 +227,7 @@ int sd_card_init(void)
 	return 0;
 }
 
-
+// --[Start] Add  05-01-2023------------------------
 int  count_total_files(char *path ){
 	int ret = 0;
 	int count = 0;
@@ -309,8 +309,8 @@ int delete_file(char const *const filename){
 	LOG_INF(" delete_file [FILE] %s", abs_path_name);
 	
 	ret = fs_open(&f_entry, abs_path_name, FS_O_READ);
-	if (ret) {
-		LOG_ERR("delete_file Open file failed");
+	if (ret != 0) {
+		LOG_ERR("delete_file file don't have");
 		return ret;
 	}
 
@@ -363,10 +363,11 @@ int  read_block_of_file(char const *const filename, size_t* size_of_block){
 		}
 
 		total_blocks = total_blocks + 1;
-		if (size_ret == 0 ) {
+		if (size_ret == 0) {
 			LOG_INF("End file total_block=%d\n", total_blocks);
 			break;
 		} else{
+			//Set data to queue
 			//sd_card_write("audio/ThongLT.mp3", buffer, &size_ret);
 		}
 
@@ -384,3 +385,35 @@ int  read_block_of_file(char const *const filename, size_t* size_of_block){
 
 	return total_blocks;
 }
+
+
+/*
+
+#include "sd_card.h"
+
+LOG_INF("sdcard MUST folder audio in SD card\n");
+if (board_rev.mask & BOARD_VERSION_VALID_MSK_SD_CARD) {
+	ret = sd_card_init();
+	if (ret != -ENODEV) {
+		LOG_INF("BOARD_VERSION_VALID_MSK_SD_CARD OK\n");
+		ERR_CHK(ret);
+		sd_card_list_files("audio");
+		
+		delete_file("audio/ThongLT.mp3");
+
+		size_t  size = 5;
+		sd_card_write("audio/write.txt",  "Hello", &size);
+
+		size_t  size_of_block = 512;
+		read_block_of_file( "audio/Quan-Nua-Khuya-Phuong-Diem-Hanh.mp3", &size_of_block);
+	}else{
+		LOG_INF("BOARD_VERSION_VALID_MSK_SD_CARD ERROR\n");
+	}
+}else{
+	LOG_INF("BOARD_VERSION_VALID_MSK_SD_CARD xyz\n");
+}
+
+
+*/
+
+// --[End] Add  05-01-2023------------------------
