@@ -208,6 +208,8 @@ void main(void)
 			LOG_INF("BOARD_VERSION_VALID_MSK_SD_CARD OK\n");
 			ERR_CHK(ret);
 			sd_card_list_files("audio");
+			size_t  size_of_block = 512;
+			get_block_of_file( "audio/Quan-Nua-Khuya-Phuong-Diem-Hanh.mp3", &size_of_block);
 		}else{
 			LOG_INF("BOARD_VERSION_VALID_MSK_SD_CARD ERROR\n");
 		}
