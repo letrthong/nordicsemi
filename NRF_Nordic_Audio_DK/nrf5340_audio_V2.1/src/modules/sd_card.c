@@ -307,8 +307,12 @@ int delete_file(char const *const filename){
 
 	strcat(abs_path_name, filename);
 	LOG_INF(" delete_file [FILE] %s", abs_path_name);
-	fs_unlink(abs_path_name);
-	 
+	struct fs_statvfs stat;
+	ret = fs_statvfs(abs_path_name, &stat);
+	if(ret== 0){
+		//Have file
+		fs_unlink(abs_path_name);
+	}
 	return ret;
 }
 

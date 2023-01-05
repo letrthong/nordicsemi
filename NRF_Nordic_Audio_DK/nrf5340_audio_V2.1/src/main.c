@@ -216,8 +216,6 @@ void main(void)
 
 			size_t  size_of_block = 512;
 			read_block_of_file( "audio/Quan-Nua-Khuya-Phuong-Diem-Hanh.mp3", &size_of_block);
-
-			
 		}else{
 			LOG_INF("BOARD_VERSION_VALID_MSK_SD_CARD ERROR\n");
 		}
