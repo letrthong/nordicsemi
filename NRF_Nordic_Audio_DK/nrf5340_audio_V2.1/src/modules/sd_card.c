@@ -301,22 +301,29 @@ int delete_file(char const *const filename){
 	}
 
 	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN) {
-		LOG_ERR("Filename is too long");
+		LOG_ERR("delete_file Filename is too long");
 		return -FR_INVALID_NAME;
 	}
 
 	strcat(abs_path_name, filename);
 	LOG_INF(" delete_file [FILE] %s", abs_path_name);
-	struct fs_statvfs stat;
-	ret = fs_statvfs(abs_path_name, &stat);
-	if(ret== 0){
-		//Have file
-		fs_unlink(abs_path_name);
+	
+	ret = fs_open(&f_entry, abs_path_name, FS_O_READ);
+	if (ret) {
+		LOG_ERR("delete_file Open file failed");
+		return ret;
 	}
+
+	ret = fs_close(&f_entry);
+	if (ret) {
+		LOG_ERR("delete_file Close file failed");
+		return ret;
+	}
+
+	ret = fs_unlink(abs_path_name);
 	return ret;
 }
 
- 
 int  read_block_of_file(char const *const filename, size_t* size_of_block){
 	LOG_INF(" get_block_of_file[FILE] %s", filename);
 	struct fs_file_t f_entry;
