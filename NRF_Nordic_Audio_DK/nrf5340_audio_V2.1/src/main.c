@@ -208,12 +208,13 @@ void main(void)
 			LOG_INF("BOARD_VERSION_VALID_MSK_SD_CARD OK\n");
 			ERR_CHK(ret);
 			sd_card_list_files("audio");
-			size_t  size_of_block = 512;
+			
 			delete_file("audio/ThongLT.mp3");
 
 			size_t  size = 5;
 			sd_card_write("audio/write.txt",  "Hello", &size);
 
+			size_t  size_of_block = 512;
 			read_block_of_file( "audio/Quan-Nua-Khuya-Phuong-Diem-Hanh.mp3", &size_of_block);
 
 			
