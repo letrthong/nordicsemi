@@ -63,7 +63,20 @@ int sd_card_init(void);
 // --[Start] Add  05-01-2023------------------------
 int count_total_files(char *path );
 int delete_file(char const *const filename);
-int read_block_of_file(char const *const filename, size_t* size_of_block);
+// int read_block_of_file(char const *const filename, size_t* size_of_block);
 
+/*
+ * @return	0 on success.
+ *              -ENODEV SD init failed. SD card likely not inserted
+ *		Otherwise, error from underlying drivers
+ */
+int read_block_of_file(char const *const filename, size_t size_of_block, size_t position_of_block,   char *const data, size_t *size_of_data);
+
+/*
+ * @return	0 on success.
+ *              -ENODEV SD init failed. SD card likely not inserted
+ *		Otherwise, error from underlying drivers
+ */
+int get_blocks_of_file(char const *const filename, size_t size_of_block, size_t* blocks);
 // --[End] Add  05-01-2023------------------------
 #endif /* _SD_CARD_H_ */

@@ -13,6 +13,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <soc.h>
+#include <sys/printk.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/shell/shell.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/hci.h>
@@ -25,6 +28,8 @@
 #include <zephyr/settings/settings.h>
 
 #include <dk_buttons_and_leds.h>
+
+#include <zephyr/kernel.h>
 
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
@@ -181,6 +186,41 @@ static int init_button(void)
 	return err;
 }
 
+K_FIFO_DEFINE(printk_fifo);
+struct printk_data_t {
+	void *fifo_reserved; /* 1st word reserved for use by fifo */
+	uint32_t led;
+	uint32_t cnt;
+};
+
+extern struct k_fifo printk_fifo;
+
+
+/*******************************************************************************
+* SD card commands 
+*******************************************************************************/
+// shell cli : sd print
+
+static int sd_card_print(const struct shell *sh, size_t argc, char **argv)
+{
+	printk("sd_card_print sd print\r\n");
+}
+
+// shell cli : sd read 
+static int sd_card_read(const struct shell *sh, size_t argc, char **argv)
+{
+	printk("sd_card_read sd read\r\n");
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(	sub_sd,
+			       				SHELL_CMD_ARG(print, NULL, "Print SD", sd_card_print, 1, 0),
+								SHELL_CMD_ARG(read, NULL, "Read SD", sd_card_read, 1, 0),
+								SHELL_SUBCMD_SET_END /* Array terminated. */
+								);
+
+SHELL_CMD_REGISTER(sd, &sub_sd, "SD card commands", NULL);
+
+
 void main(void)
 {
 	int blink_status = 0;
@@ -242,13 +282,25 @@ void main(void)
 
 	printk("Advertising successfully started\n");
     int count = 0;
+
+	
 	for (;;) {
-		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
-		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
+		// dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
+		  k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
 		count = count+ 1;
 		if(count> 1000){
 			count = 0;
 		}
 		printk(" app_led_cb count=%d\n", count);
+
+
+		struct printk_data_t *rx_data = k_fifo_get(&printk_fifo,
+							   K_FOREVER);
+	    if(rx_data !=NULL){
+				printk("Toggled led%d; counter=%d\n",rx_data->led, rx_data->cnt);
+			printk("hello\r\n");
+			k_free(rx_data);
+		}
+		
 	}
 }

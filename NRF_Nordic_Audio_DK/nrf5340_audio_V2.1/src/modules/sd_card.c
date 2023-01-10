@@ -324,11 +324,73 @@ int delete_file(char const *const filename){
 	return ret;
 }
 
-int  read_block_of_file(char const *const filename, size_t* size_of_block){
+// int  read_block_of_file(char const *const filename, size_t* size_of_block){
+// 	LOG_INF(" get_block_of_file[FILE] %s", filename);
+// 	struct fs_file_t f_entry;
+// 	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
+// 	int ret;
+
+// 	if (!sd_init_success) {
+// 		return -ENODEV;
+// 	}
+
+// 	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN) {
+// 		LOG_ERR("Filename is too long");
+// 		return -FR_INVALID_NAME;
+// 	}
+
+// 	strcat(abs_path_name, filename);
+// 	fs_file_t_init(&f_entry);
+
+// 	ret = fs_open(&f_entry, abs_path_name, FS_O_READ);
+// 	if (ret) {
+// 		LOG_ERR("Open file failed");
+// 		return ret;
+// 	}
+     
+// 	int total_bytes = 0;
+// 	int size = *size_of_block;
+// 	char buffer[size];
+// 	int total_blocks = 0;
+ 
+// 	while(true){
+// 		size_t size_ret = fs_read(&f_entry, buffer,  size);
+		
+// 		//LOG_INF("get_block_of_files size=%d\n", ret);
+// 		if (size_ret < 0) {
+// 			LOG_ERR("Read file failed");
+// 			break;
+// 		}
+
+// 		total_blocks = total_blocks + 1;
+// 		if (size_ret == 0) {
+// 			LOG_INF("End file total_block=%d\n", total_blocks);
+// 			break;
+// 		} else{
+// 			//Set data to queue
+// 			//sd_card_write("audio/ThongLT.mp3", buffer, &size_ret);
+// 		}
+
+// 		total_bytes = total_bytes + size_ret;
+// 	}
+	
+	 
+// 	LOG_INF("get_block_of_files block=%d\n", total_blocks);
+// 	LOG_INF("get_block_of_files total_bytes=%d\n", total_bytes);
+// 	ret = fs_close(&f_entry);
+// 	if (ret) {
+// 		LOG_ERR("Close file failed");
+// 		return ret;
+// 	}
+
+// 	return total_blocks;
+// }
+
+int  read_block_of_file(char const *const filename, size_t  size_of_block, size_t  position_of_block,  char *const data, size_t *size_of_data){
 	LOG_INF(" get_block_of_file[FILE] %s", filename);
 	struct fs_file_t f_entry;
 	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
-	int ret;
+	int ret = 0;
 
 	if (!sd_init_success) {
 		return -ENODEV;
@@ -348,42 +410,55 @@ int  read_block_of_file(char const *const filename, size_t* size_of_block){
 		return ret;
 	}
      
-	int total_bytes = 0;
-	int size = *size_of_block;
-	char buffer[size];
-	int total_blocks = 0;
- 
-	while(true){
-		size_t size_ret = fs_read(&f_entry, buffer,  size);
-		
-		//LOG_INF("get_block_of_files size=%d\n", ret);
-		if (size_ret < 0) {
-			LOG_ERR("Read file failed");
-			break;
-		}
-
-		total_blocks = total_blocks + 1;
-		if (size_ret == 0) {
-			LOG_INF("End file total_block=%d\n", total_blocks);
-			break;
-		} else{
-			//Set data to queue
-			//sd_card_write("audio/ThongLT.mp3", buffer, &size_ret);
-		}
-
-		total_bytes = total_bytes + size_ret;
+	off_t offset  = size_of_block *position_of_block;
+	ret = fs_seek(&f_entry, offset, FS_SEEK_SET);
+	if (ret) {
+		LOG_ERR("Seek file pointer failed");
+		fs_close(&f_entry);
+		return ret;
 	}
-	
+ 
+	int cur_size = 0;
 	 
-	LOG_INF("get_block_of_files block=%d\n", total_blocks);
-	LOG_INF("get_block_of_files total_bytes=%d\n", total_bytes);
+	ret = fs_read(&f_entry, data,  cur_size);
+	if (ret < 0) {
+		LOG_ERR("Read file failed");
+		fs_close(&f_entry);
+		return ret;
+	}
+
+	*size_of_data = cur_size;
 	ret = fs_close(&f_entry);
 	if (ret) {
 		LOG_ERR("Close file failed");
 		return ret;
 	}
+	return ret;
+}
 
-	return total_blocks;
+int get_blocks_of_file(char const *const filename, size_t size_of_block, size_t* blocks){
+	LOG_INF(" get_blocks_of_file [FILE] %s", filename);
+	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
+	 
+	if (!sd_init_success) {
+		return -ENODEV;
+	}
+
+	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN) {
+		LOG_ERR("Filename is too long");
+		return -FR_INVALID_NAME;
+	}
+
+	strcat(abs_path_name, filename);
+	struct fs_dirent  entry;
+	int ret = fs_stat(abs_path_name, &entry);
+	if(ret == 0){
+		if((entry.type == FS_DIR_ENTRY_FILE )&&  (entry.size > 0)){
+			int cur_blocks = ((entry.size)/size_of_block) +1;
+       		*blocks =  cur_blocks; 
+		}  
+	}
+	return ret;
 }
 
 
