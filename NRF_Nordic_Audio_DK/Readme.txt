@@ -17,3 +17,6 @@ nRF5340 Audio DK
 
 Audio 
 	CS47L63
+	
+https://community.element14.com/products/roadtest/rt/roadtests/586/bluetooth_le_audio_d#pifragment-4106=9&pifragment-4100=4
+https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/applications/nrf5340_audio/README.html
