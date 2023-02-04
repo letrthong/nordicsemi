@@ -26,3 +26,7 @@ Audio
 https://community.element14.com/products/roadtest/rt/roadtests/586/bluetooth_le_audio_d#pifragment-4106=9&pifragment-4100=4
 https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/applications/nrf5340_audio/README.html
 https://webinars.nordicsemi.com/future-proofing-iot-development-5
+
+C:\Users\HP\zephyrproject\zephyr
+   west build -p -b nrf5340_audio_dk_nrf5340_cpuapp samples/hello_world
+   nrfjprog --program build/zephyr/zephyr.hex --coprocessor CP_APPLICATION --chiperase -r
