@@ -36,4 +36,7 @@ C:\Users\HP\zephyrproject\zephyr
    west flash
    
    
-   https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases/release-notes-2.1.1.html
+   https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases/release-notes-2.1.1.html'
+   
+   
+   https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/gs_installing.html
