@@ -34,3 +34,6 @@ C:\Users\HP\zephyrproject\zephyr
    west build -p always -b nrf5340_audio_dk_nrf5340_cpuapp samples\basic\blinky
    
    west flash
+   
+   
+   https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases/release-notes-2.1.1.html
