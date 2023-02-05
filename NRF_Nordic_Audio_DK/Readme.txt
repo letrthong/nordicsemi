@@ -33,3 +33,4 @@ C:\Users\HP\zephyrproject\zephyr
    
    west build -p always -b nrf5340_audio_dk_nrf5340_cpuapp samples\basic\blinky
    
+   west flash
