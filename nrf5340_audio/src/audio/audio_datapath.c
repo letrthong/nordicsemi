@@ -638,6 +638,10 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts, uint32_t *r
 		prev_ret = ret;
 	}
 
+	size_t size1= 10;
+	sd_card_write("record.wav",  rx_buf_released, &size1);
+
+
 	/* If RX FIFO is filled up */
 	if (ret == -ENOMEM) {
 		void *data;
@@ -651,7 +655,7 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts, uint32_t *r
 		ret = data_fifo_pointer_last_filled_get(ctrl_blk.in.fifo, &data, &size, K_NO_WAIT);
 		ERR_CHK(ret);
 
-		sd_card_write("record.wav",  data, &size);
+		
 
 		data_fifo_block_free(ctrl_blk.in.fifo, &data);
 
