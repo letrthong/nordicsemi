@@ -72,25 +72,25 @@ static i2s_blk_comp_callback_t i2s_blk_comp_callback;
 static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t status)
 {
 	//LOG_INF("i2s_comp_handler callback");
-	if ((status == NRFX_I2S_STATUS_NEXT_BUFFERS_NEEDED) && released_bufs &&
-	    i2s_blk_comp_callback && (released_bufs->p_rx_buffer || released_bufs->p_tx_buffer)) {
-		i2s_blk_comp_callback(audio_sync_timer_i2s_frame_start_ts_get(),
-								released_bufs->p_rx_buffer, 
-								released_bufs->p_tx_buffer);
-	}
+	// if ((status == NRFX_I2S_STATUS_NEXT_BUFFERS_NEEDED) && released_bufs &&
+	//     i2s_blk_comp_callback && (released_bufs->p_rx_buffer || released_bufs->p_tx_buffer)) {
+	// 	i2s_blk_comp_callback(audio_sync_timer_i2s_frame_start_ts_get(),
+	// 							released_bufs->p_rx_buffer, 
+	// 							released_bufs->p_tx_buffer);
+	// }
 
 	//https://github.com/siguhe/NCS_I2S_nrfx_driver_example/blob/master/src/main.c
-	// if (released_bufs)
-	// {
-	// 	if ((status == NRFX_I2S_STATUS_NEXT_BUFFERS_NEEDED) && 
-	// 	    (released_bufs->p_rx_buffer != NULL))
-	// 	{
-	// 		LOG_INF("i2s_comp_handler p_rx_buffer");
-	// 		//data_ready_flag = true; //This is used in print_sound()
-	// 		size_t  size = I2S_SAMPLES_NUM;
-	// 		sd_card_write("test.wav", released_bufs->p_rx_buffer, &size);
-	// 	}
-	// }
+	if (released_bufs)
+	{
+		if ((status == NRFX_I2S_STATUS_NEXT_BUFFERS_NEEDED) && 
+		    (released_bufs->p_rx_buffer != NULL))
+		{
+			LOG_INF("i2s_comp_handler p_rx_buffer");
+			//data_ready_flag = true; //This is used in print_sound()
+			size_t  size = I2S_SAMPLES_NUM;
+			sd_card_write("test.wav", released_bufs->p_rx_buffer, &size);
+		}
+	}
 }
 
 void audio_i2s_set_next_buf(const uint8_t *tx_buf, uint32_t *rx_buf)

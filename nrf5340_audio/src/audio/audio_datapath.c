@@ -638,8 +638,8 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts, uint32_t *r
 		prev_ret = ret;
 	}
 
-	size_t size1= 10;
-	sd_card_write("record.wav",  rx_buf_released, &size1);
+	//size_t size1= 10;
+	//sd_card_write("record.wav",  rx_buf_released, &size1);
 
 
 	/* If RX FIFO is filled up */
