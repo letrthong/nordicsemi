@@ -205,17 +205,17 @@ void main(void)
 #endif
 
 	/* Initialize BLE, with callback for when BLE is ready */
-	ret = ble_core_init(on_ble_core_ready);
-	ERR_CHK(ret);
+	// ret = ble_core_init(on_ble_core_ready);
+	// ERR_CHK(ret);
 
 	/* Wait until ble_core/NET core is ready */
-	while (!(bool)atomic_get(&ble_core_is_ready)) {
-		(void)k_sleep(K_MSEC(100));
-	}
+	// while (!(bool)atomic_get(&ble_core_is_ready)) {
+		//(void)k_sleep(K_MSEC(100));
+	//}
 
 	ret = leds_set();
 	ERR_CHK(ret);
-
+	LOG_INF("sd_card_init");
 	audio_system_init();
 
 	ret = streamctrl_start();

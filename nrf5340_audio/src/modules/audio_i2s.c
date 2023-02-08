@@ -77,6 +77,7 @@ static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t s
 
 void audio_i2s_set_next_buf(const uint8_t *tx_buf, uint32_t *rx_buf)
 {
+	LOG_INF("audio_i2s_set_next_buf");
 	__ASSERT_NO_MSG(state == AUDIO_I2S_STATE_STARTED);
 	__ASSERT_NO_MSG(rx_buf != NULL);
 #if (CONFIG_STREAM_BIDIRECTIONAL || (CONFIG_AUDIO_DEV == HEADSET))
@@ -94,6 +95,7 @@ void audio_i2s_set_next_buf(const uint8_t *tx_buf, uint32_t *rx_buf)
 
 void audio_i2s_start(const uint8_t *tx_buf, uint32_t *rx_buf)
 {
+	LOG_INF("audio_i2s_start");
 	__ASSERT_NO_MSG(state == AUDIO_I2S_STATE_IDLE);
 	__ASSERT_NO_MSG(rx_buf != NULL);
 #if (CONFIG_STREAM_BIDIRECTIONAL || (CONFIG_AUDIO_DEV == HEADSET))
@@ -128,7 +130,7 @@ void audio_i2s_blk_comp_cb_register(i2s_blk_comp_callback_t blk_comp_callback)
 
 void audio_i2s_init(void)
 {
-	LOG_DBG("audio_i2s_init");
+	LOG_INF("audio_i2s_init start ");
 	__ASSERT_NO_MSG(state == AUDIO_I2S_STATE_UNINIT);
 
 	nrfx_err_t ret;
@@ -141,15 +143,18 @@ void audio_i2s_init(void)
 	while (!NRF_CLOCK_EVENT_HFCLKAUDIOSTARTED) {
 		k_sleep(K_MSEC(1));
 	}
-
+   
+   LOG_INF("pinctrl_apply_state");
 	ret = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(I2S_NL), PINCTRL_STATE_DEFAULT);
 	__ASSERT_NO_MSG(ret == 0);
 
 	IRQ_CONNECT(DT_IRQN(I2S_NL), DT_IRQ(I2S_NL, priority), nrfx_isr, nrfx_i2s_irq_handler, 0);
 	irq_enable(DT_IRQN(I2S_NL));
 
+	LOG_INF("nrfx_i2s_init");
 	ret = nrfx_i2s_init(&cfg, i2s_comp_handler);
 	__ASSERT_NO_MSG(ret == NRFX_SUCCESS);
 
 	state = AUDIO_I2S_STATE_IDLE;
+	LOG_INF("audio_i2s_init end");
 }

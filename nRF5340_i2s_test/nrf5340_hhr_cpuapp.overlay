@@ -1,0 +1,16 @@
+/ {
+	aliases {
+		i2s0 = &i2s0;
+	};
+};
+
+&i2s0 {
+	status = "okay";
+	compatible = "nordic,nrf-i2s";
+	sck-pin = <37>;
+    lrck-pin = <38>;
+	mck-pin = <4>;
+	sdin-pin = <35>;
+	sdout-pin = <36>;
+	clock-source = "PCLK32M_HFXO";
+};
