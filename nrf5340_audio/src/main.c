@@ -225,7 +225,7 @@ void main(void)
 		//streamctrl_event_handler();
 		//STACK_USAGE_PRINT("main", &z_main_thread);
 		audio_system_start();
-		k_sleep(K_MSEC(30000));
+		k_sleep(K_MSEC(5000));
 		audio_system_stop();
 		k_sleep(K_MSEC(1000));
 	}

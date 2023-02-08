@@ -6,6 +6,9 @@
 
 #include "audio_i2s.h"
 
+#include "sd_card.h"
+
+
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/pinctrl.h>
@@ -77,15 +80,17 @@ static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t s
 	}
 
 	//https://github.com/siguhe/NCS_I2S_nrfx_driver_example/blob/master/src/main.c
-	if (released_bufs)
-	{
-		if ((status == NRFX_I2S_STATUS_NEXT_BUFFERS_NEEDED) && 
-		    (released_bufs->p_rx_buffer != NULL))
-		{
-			LOG_INF("i2s_comp_handler p_rx_buffer");
-			//data_ready_flag = true; //This is used in print_sound()
-		}
-	}
+	// if (released_bufs)
+	// {
+	// 	if ((status == NRFX_I2S_STATUS_NEXT_BUFFERS_NEEDED) && 
+	// 	    (released_bufs->p_rx_buffer != NULL))
+	// 	{
+	// 		LOG_INF("i2s_comp_handler p_rx_buffer");
+	// 		//data_ready_flag = true; //This is used in print_sound()
+	// 		size_t  size = I2S_SAMPLES_NUM;
+	// 		sd_card_write("test.wav", released_bufs->p_rx_buffer, &size);
+	// 	}
+	// }
 }
 
 void audio_i2s_set_next_buf(const uint8_t *tx_buf, uint32_t *rx_buf)

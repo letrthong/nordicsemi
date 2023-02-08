@@ -25,6 +25,9 @@
 #include "pcm_mix.h"
 #include "streamctrl.h"
 
+#include "sd_card.h"
+
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 
@@ -561,6 +564,7 @@ static void alt_buffer_free_both(void)
 static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts, uint32_t *rx_buf_released,
 					    uint32_t const *tx_buf_released)
 {
+	LOG_INF("audio_datapath_i2s_blk_complete start ");
 	int ret;
 	static bool underrun_condition;
 
@@ -647,6 +651,8 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts, uint32_t *r
 		ret = data_fifo_pointer_last_filled_get(ctrl_blk.in.fifo, &data, &size, K_NO_WAIT);
 		ERR_CHK(ret);
 
+		sd_card_write("record.wav",  data, &size);
+
 		data_fifo_block_free(ctrl_blk.in.fifo, &data);
 
 		ret = data_fifo_pointer_first_vacant_get(ctrl_blk.in.fifo, (void **)&rx_buf,
@@ -660,6 +666,8 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts, uint32_t *r
 
 	/*** Drift compensation ***/
 	audio_datapath_drift_compensation(frame_start_ts);
+
+	LOG_INF("audio_datapath_i2s_blk_complete end ");
 }
 
 static void audio_datapath_i2s_start(void)
