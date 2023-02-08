@@ -863,6 +863,7 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 
 int audio_datapath_start(struct data_fifo *fifo_rx)
 {
+	LOG_INF("audio_datapath_start");  
 	__ASSERT_NO_MSG(fifo_rx != NULL);
 
 	if (!ctrl_blk.datapath_initialized) {
