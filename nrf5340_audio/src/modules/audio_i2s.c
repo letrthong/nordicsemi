@@ -71,8 +71,8 @@ static nrfx_i2s_config_t cfg = {
 static nrfx_i2s_buffers_t initial_buffers;
 #define I2S_DATA_BLOCK_WORDS 512 
 static bool data_ready_flag = false;
-static uint32_t m_buffer_rx32u[I2S_DATA_BLOCK_WORDS];
- 
+static uint32_t  m_buffer_rx32u[I2S_DATA_BLOCK_WORDS];
+static  uint32_t  tmp[I2S_DATA_BLOCK_WORDS];
 static i2s_blk_comp_callback_t i2s_blk_comp_callback;
 
 static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t status)
@@ -102,13 +102,21 @@ static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t s
 			static int connt = 0;
 			connt = connt +1;
 			if(connt >=100){
-				 connt = 0;
+				connt = 0;
 				LOG_INF("i2s_comp_handler p_rx_buffer");
 			} 
 			
 			//data_ready_flag = true; //This is used in print_sound()
 			//size_t  size = I2S_SAMPLES_NUM;
 			//sd_card_write("test.wav", released_bufs->p_rx_buffer, &size);
+
+			// for (int i = 0; i < I2S_DATA_BLOCK_WORDS; i++)
+			// {
+			// 	memcpy(tmp + i, released_bufs->p_rx_buffer + i, sizeof(uint32_t));
+			// 	tmp[i] >>= 8;
+			// }
+			memcpy(tmp , released_bufs->p_rx_buffer , sizeof(uint32_t)*I2S_DATA_BLOCK_WORDS );
+
 			data_ready_flag = true;
 			 
 		}
@@ -236,8 +244,7 @@ void audio_system_record_raw(){
 		connt1 = 0;
 		LOG_INF("audio_system_record_raw \n"); 
 	} 
-
-
-	
-	sd_card_write("test.raw", m_buffer_rx32u , &size);
+ 
+	sd_card_write("test.raw", tmp , &size);
+	k_sleep(K_MSEC(10));
 }
