@@ -224,6 +224,10 @@ void main(void)
 	//ERR_CHK(ret);
 
 	audio_system_record_start();
+	size_t  size = 5;
+	char buf[5]=  {'h',  'e', 'l','o', 'o'};
+	sd_card_write("test1.raw", buf , &size);
+
 	while (1) {
 		
 		//streamctrl_event_handler();

@@ -102,23 +102,29 @@ static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t s
 			static int connt = 0;
 			connt = connt +1;
 			if(connt >=100){
-				connt = 0;
-				LOG_INF("i2s_comp_handler p_rx_buffer");
+				 
+				LOG_INF("i2s_comp_handler p_rx_buffer start");
 			} 
 			
 			//data_ready_flag = true; //This is used in print_sound()
 			//size_t  size = I2S_SAMPLES_NUM;
 			//sd_card_write("test.wav", released_bufs->p_rx_buffer, &size);
 
-			// for (int i = 0; i < I2S_DATA_BLOCK_WORDS; i++)
-			// {
-			// 	memcpy(tmp + i, released_bufs->p_rx_buffer + i, sizeof(uint32_t));
-			// 	tmp[i] >>= 8;
-			// }
-			memcpy(tmp , released_bufs->p_rx_buffer , sizeof(uint32_t)*I2S_DATA_BLOCK_WORDS );
-
-			data_ready_flag = true;
-			 
+			for (int i = 0; i < I2S_DATA_BLOCK_WORDS; i++)
+			{
+				uint32_t data = released_bufs->p_rx_buffer+i;
+		        // LOG_INF("i2s_comp_handler data=[%d] i=%d \n",  data,  i); 
+				//memcpy(tmp[i] , released_bufs->p_rx_buffer , sizeof(uint32_t)*I2S_DATA_BLOCK_WORDS );
+				//memcpy(tmp+i ,&data, sizeof(uint32_t)  );
+				tmp[i] = data;
+				//LOG_INF("i2s_comp_handler tmp[i]=[%d] i=%d \n",  tmp[i],  i); 
+				data_ready_flag = true;
+			}
+			
+			 if(connt >=100){
+				connt = 0;
+				LOG_INF("i2s_comp_handler p_rx_buffer end");
+			} 
 		}
 	}
 }
@@ -237,14 +243,27 @@ void audio_system_record_raw(){
 	// nrfx_i2s_stop();
 	data_ready_flag = false;
 	
-	size_t  size = I2S_DATA_BLOCK_WORDS;
+	//size_t  size = I2S_DATA_BLOCK_WORDS;
 	static int connt1 = 0;
 	connt1 = connt1 +1;
 	if(connt1 >=100){
 		connt1 = 0;
 		LOG_INF("audio_system_record_raw \n"); 
 	} 
- 
-	sd_card_write("test.raw", tmp , &size);
-	k_sleep(K_MSEC(10));
+	
+	for (int i = 0; i < I2S_DATA_BLOCK_WORDS; i++)
+	{
+		uint32_t data = tmp[i];
+		size_t  size = sizeof(uint32_t);
+		char buf[size +1];
+		memcpy(buf, &data, size);
+		LOG_INF("audio_system_record_raw data=[%d] size=%d  i=%d  \n",  data, size, i); 
+		  
+		sd_card_write("test.raw", buf , &size);
+		 
+	}
+
+
+	
+	//k_sleep(K_MSEC(10));
 }
