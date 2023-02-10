@@ -43,6 +43,8 @@ static struct sw_codec_config sw_codec_cfg;
 static int16_t test_tone_buf[CONFIG_AUDIO_SAMPLE_RATE_HZ / 1000];
 static size_t test_tone_size;
 
+
+
 static void audio_gateway_configure(void)
 {
 	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
@@ -376,13 +378,18 @@ void audio_system_init(void)
 	ERR_CHK(ret);
 #else
     LOG_INF("audio_datapath_init \n");
-	ret = audio_datapath_init();
+	//ret = audio_datapath_init();
 	ERR_CHK(ret);
 	audio_i2s_init();
-	ret = hw_codec_init();
+	//ret = hw_codec_init();
+ 
+	    
 	ERR_CHK(ret);
 #endif
 }
+
+
+
 
 static int cmd_audio_system_start(const struct shell *shell, size_t argc, const char **argv)
 {

@@ -26,6 +26,8 @@
 #include "channel_assignment.h"
 #include "streamctrl.h"
 
+#include "audio_i2s.h"
+
 #if defined(CONFIG_AUDIO_DFU_ENABLE)
 #include "dfu_entry.h"
 #endif
@@ -221,12 +223,15 @@ void main(void)
 	//ret = streamctrl_start();
 	//ERR_CHK(ret);
 
+	audio_system_record_start();
 	while (1) {
+		
 		//streamctrl_event_handler();
 		//STACK_USAGE_PRINT("main", &z_main_thread);
-		audio_system_start();
-		k_sleep(K_MSEC(5000));
-		audio_system_stop();
-		k_sleep(K_MSEC(1000));
+		//audio_system_start();
+		//k_sleep(K_MSEC(1000));
+		audio_system_record_raw();
+		
+		//k_sleep(K_MSEC(10));
 	}
 }

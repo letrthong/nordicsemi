@@ -67,6 +67,12 @@ static nrfx_i2s_config_t cfg = {
 	.enable_bypass = false,
 };
 
+//ThongLT
+static nrfx_i2s_buffers_t initial_buffers;
+#define I2S_DATA_BLOCK_WORDS 512 
+static bool data_ready_flag = false;
+static uint32_t m_buffer_rx32u[I2S_DATA_BLOCK_WORDS];
+ 
 static i2s_blk_comp_callback_t i2s_blk_comp_callback;
 
 static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t status)
@@ -79,16 +85,32 @@ static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t s
 	// 							released_bufs->p_tx_buffer);
 	// }
 
+	if (NRFX_I2S_STATUS_NEXT_BUFFERS_NEEDED == status)
+	{
+		nrfx_err_t err = nrfx_i2s_next_buffers_set(&initial_buffers);
+		if (err != NRFX_SUCCESS)
+		{
+			//printk("Error!, continuing running as if nothing happened, but you should probably investigate.\n");
+		}
+	}
+
 	//https://github.com/siguhe/NCS_I2S_nrfx_driver_example/blob/master/src/main.c
 	if (released_bufs)
 	{
-		if ((status == NRFX_I2S_STATUS_NEXT_BUFFERS_NEEDED) && 
-		    (released_bufs->p_rx_buffer != NULL))
+		if (released_bufs->p_rx_buffer != NULL)
 		{
-			LOG_INF("i2s_comp_handler p_rx_buffer");
+			static int connt = 0;
+			connt = connt +1;
+			if(connt >=100){
+				 connt = 0;
+				LOG_INF("i2s_comp_handler p_rx_buffer");
+			} 
+			
 			//data_ready_flag = true; //This is used in print_sound()
-			size_t  size = I2S_SAMPLES_NUM;
-			sd_card_write("test.wav", released_bufs->p_rx_buffer, &size);
+			//size_t  size = I2S_SAMPLES_NUM;
+			//sd_card_write("test.wav", released_bufs->p_rx_buffer, &size);
+			data_ready_flag = true;
+			 
 		}
 	}
 }
@@ -172,9 +194,50 @@ void audio_i2s_init(void)
 	irq_enable(DT_IRQN(I2S_NL));
 
 	LOG_INF("nrfx_i2s_init");
+	
+
 	ret = nrfx_i2s_init(&cfg, i2s_comp_handler);
 	__ASSERT_NO_MSG(ret == NRFX_SUCCESS);
 
 	state = AUDIO_I2S_STATE_IDLE;
 	LOG_INF("audio_i2s_init end");
+ 
+}
+
+
+void audio_system_record_start(){
+	memset(&m_buffer_rx32u, 0x00, sizeof(m_buffer_rx32u));
+	initial_buffers.p_rx_buffer = m_buffer_rx32u;
+	
+
+	LOG_INF("audio_system_record_start \n");
+	nrfx_err_t  err_code = nrfx_i2s_start(&initial_buffers, I2S_DATA_BLOCK_WORDS, 0); //start recording
+	if (err_code != NRFX_SUCCESS)
+	{
+		printk("I2S start error\n");
+		//return err_code;
+	}
+}
+
+void audio_system_record_raw(){
+	//printk("audio_thong_stop\n");
+	while (!data_ready_flag)
+	{
+		k_sleep(K_MSEC(1));
+		//Wait for data. Since we do not want I2S_DATA_BLOCK_WORDS amount of prints inside the interrupt.
+	}
+	// nrfx_i2s_stop();
+	data_ready_flag = false;
+	
+	size_t  size = I2S_DATA_BLOCK_WORDS;
+	static int connt1 = 0;
+	connt1 = connt1 +1;
+	if(connt1 >=100){
+		connt1 = 0;
+		LOG_INF("audio_system_record_raw \n"); 
+	} 
+
+
+	
+	sd_card_write("test.raw", m_buffer_rx32u , &size);
 }

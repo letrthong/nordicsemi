@@ -77,4 +77,10 @@ void audio_i2s_blk_comp_cb_register(i2s_blk_comp_callback_t blk_comp_callback);
  */
 void audio_i2s_init(void);
 
+ 
+ 
+void audio_system_record_start();
+
+void audio_system_record_raw();
+
 #endif /* _AUDIO_I2S_H_ */
