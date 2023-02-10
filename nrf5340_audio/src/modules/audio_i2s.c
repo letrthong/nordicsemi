@@ -255,8 +255,16 @@ void audio_system_record_raw(){
 	{
 		uint32_t data = tmp[i];
 		size_t  size = sizeof(uint32_t);
-		char buf[size +1];
-		memcpy(buf, &data, size);
+		char buf[size ];
+		
+		buf[0] = (data >> 24) & 0XF;
+		buf[1] = (data >> 16) & 0XF;
+		buf[2] = (data >> 8) & 0XF;
+		buf[3] = (data >> 0) & 0XF;
+     
+
+
+
 		LOG_INF("audio_system_record_raw data=[%d] size=%d  i=%d  \n",  data, size, i); 
 		  
 		sd_card_write("test.raw", buf , &size);
