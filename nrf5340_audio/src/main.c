@@ -226,7 +226,7 @@ void main(void)
 	audio_system_record_start();
 	size_t  size = 5;
 	char buf[5]=  {'h',  'e', 'l','o', 'o'};
-	sd_card_write("test1.raw", buf , &size);
+	//sd_card_write("test1.raw", buf , &size);
 
 	while (1) {
 		

@@ -103,7 +103,7 @@ static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t s
 			connt = connt +1;
 			if(connt >=100){
 				 
-				LOG_INF("i2s_comp_handler p_rx_buffer start");
+				//LOG_INF("i2s_comp_handler p_rx_buffer start");
 			} 
 			
 			//data_ready_flag = true; //This is used in print_sound()
@@ -118,12 +118,14 @@ static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t s
 				//memcpy(tmp+i ,&data, sizeof(uint32_t)  );
 				tmp[i] = data;
 				//LOG_INF("i2s_comp_handler tmp[i]=[%d] i=%d \n",  tmp[i],  i); 
-				data_ready_flag = true;
+				 
 			}
+
+			data_ready_flag = true;
 			
 			 if(connt >=100){
 				connt = 0;
-				LOG_INF("i2s_comp_handler p_rx_buffer end");
+				//LOG_INF("i2s_comp_handler p_rx_buffer end");
 			} 
 		}
 	}
@@ -234,13 +236,13 @@ void audio_system_record_start(){
 }
 
 void audio_system_record_raw(){
-	//printk("audio_thong_stop\n");
+	 LOG_INF("audio_system_record_raw start\n"); 
 	while (!data_ready_flag)
 	{
 		k_sleep(K_MSEC(1));
 		//Wait for data. Since we do not want I2S_DATA_BLOCK_WORDS amount of prints inside the interrupt.
 	}
-	// nrfx_i2s_stop();
+	  nrfx_i2s_stop();
 	data_ready_flag = false;
 	
 	//size_t  size = I2S_DATA_BLOCK_WORDS;
@@ -251,27 +253,25 @@ void audio_system_record_raw(){
 		LOG_INF("audio_system_record_raw \n"); 
 	} 
 	
+	 
 	for (int i = 0; i < I2S_DATA_BLOCK_WORDS; i++)
 	{
 		uint32_t data = tmp[i];
 		size_t  size = sizeof(uint32_t);
 		char buf[size ];
 		
-		buf[0] = (data >> 24) & 0XF;
-		buf[1] = (data >> 16) & 0XF;
-		buf[2] = (data >> 8) & 0XF;
-		buf[3] = (data >> 0) & 0XF;
-     
-
-
-
-		LOG_INF("audio_system_record_raw data=[%d] size=%d  i=%d  \n",  data, size, i); 
+		buf[0] =  data   & 0XFF;
+		buf[1] = (data >> 8) & 0XFF;
+		buf[2] = (data >> 16) & 0XFF;
+		buf[3] = (data >> 24) & 0XFF;
+		
+		//LOG_INF("audio_system_record_raw data=[%d] size=%d  i=%d  \n",  data, size, i); 
 		  
 		sd_card_write("test.raw", buf , &size);
 		 
 	}
 
-
+    audio_system_record_start();
 	
 	//k_sleep(K_MSEC(10));
 }
