@@ -54,7 +54,7 @@ static nrfx_i2s_config_t cfg = {
 	.format = NRF_I2S_FORMAT_I2S,
 	.alignment = NRF_I2S_ALIGN_LEFT,
 	//.ratio = CONFIG_AUDIO_RATIO,
-	.ratio = 128,
+	.ratio = NRF_I2S_RATIO_128X,
 	.mck_setup = 0x66666000,
 //#if (CONFIG_AUDIO_BIT_DEPTH_16)
 //	.sample_width = NRF_I2S_SWIDTH_16BIT,
@@ -93,7 +93,7 @@ static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t s
 		nrfx_err_t err = nrfx_i2s_next_buffers_set(&initial_buffers);
 		if (err != NRFX_SUCCESS)
 		{
-			//printk("Error!, continuing running as if nothing happened, but you should probably investigate.\n");
+			printk("Error!, continuing running as if nothing happened, but you should probably investigate.\n");
 		}
 	}
 
@@ -119,11 +119,13 @@ static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t s
 		        // LOG_INF("i2s_comp_handler data=[%d] i=%d \n",  data,  i); 
 				//memcpy(tmp[i] , released_bufs->p_rx_buffer , sizeof(uint32_t)*I2S_DATA_BLOCK_WORDS );
 				//memcpy(tmp+i ,&data, sizeof(uint32_t)  );
-				tmp[i] = data;
+				 //tmp[i] = data;
 				//LOG_INF("i2s_comp_handler tmp[i]=[%d] i=%d \n",  tmp[i],  i); 
 				 
 			}
 
+			 
+			memcpy(tmp, m_buffer_rx32u, sizeof(m_buffer_rx32u));
 			data_ready_flag = true;
 			
 			 if(connt >=100){
@@ -229,7 +231,7 @@ void audio_system_record_start(){
 	initial_buffers.p_rx_buffer = m_buffer_rx32u;
 	
 
-	LOG_INF("audio_system_record_start \n");
+	//LOG_INF("audio_system_record_start \n");
 	nrfx_err_t  err_code = nrfx_i2s_start(&initial_buffers, I2S_DATA_BLOCK_WORDS, 0); //start recording
 	if (err_code != NRFX_SUCCESS)
 	{
@@ -246,7 +248,7 @@ void audio_system_record_raw(){
 		k_sleep(K_MSEC(1));
 		//Wait for data. Since we do not want I2S_DATA_BLOCK_WORDS amount of prints inside the interrupt.
 	}
-	//  nrfx_i2s_stop();
+	 nrfx_i2s_stop();
 	data_ready_flag = false;
 	
 	//size_t  size = I2S_DATA_BLOCK_WORDS;
@@ -259,35 +261,45 @@ void audio_system_record_raw(){
 	
 	char buf[I2S_DATA_BLOCK_WORDS*4];
 	size_t size = I2S_DATA_BLOCK_WORDS * 4;
+
+	for (int i = 0; i < I2S_DATA_BLOCK_WORDS; i++) {
+		printk("%u, ", tmp[i]); 
+		//k_sleep(K_MSEC(16));
+	}
+	printk("\n\n");
+	k_sleep(K_MSEC(1000));
+
 	for (int i = 0; i < I2S_DATA_BLOCK_WORDS; i++)
 	{
-		uint32_t data = tmp[i];
+		//uint32_t data = tmp[i];
 		//size_t  size = sizeof(uint32_t);
-		
+		uint32_t data = m_buffer_rx32u[i];
 		
 		buf[i*2] =  data   & 0XFF;
 		buf[(i*2)+1] = (data >> 8) & 0XFF;
 		buf[(i*2)+2] = (data >> 16) & 0XFF;
 		buf[(i*2)+3] = (data >> 24) & 0XFF;
 		
-		 //LOG_INF("audio_system_record_raw %x-%x-%x-%x index=%d\n", buf[0], buf[1], buf[2],buf[3], i); 
-		//  k_sleep(K_MSEC(100));
 		 
+		//LOG_INF("audio_system_record_raw %x-%x-%x-%x index=%d\n", buf[0], buf[1],
+		//		buf[2], buf[3], i);
+		//k_sleep(K_MSEC(1));
 		 
+
 	}
 
 	if (count < 10000) {
-		LOG_INF("audio_system_record_raw store sdcard\n"); 
-		sd_card_write("test.raw", buf, &size);
+		//LOG_INF("audio_system_record_raw store sdcard\n"); 
+		//sd_card_write("test.raw", buf, &size);
 	}
 	
 
-    //audio_system_record_start();
+    audio_system_record_start();
 	
 	//k_sleep(K_MSEC(10));
 	count = count + 1;
 	if (count == 10000) {
-		sd_card_close();
+		//sd_card_close();
 		LOG_INF("audio_system_record_raw  close file\n"); 
 	}
 }

@@ -6,3 +6,6 @@ nrfjprog --program build/zephyr/zephyr.hex --coprocessor CP_APPLICATION --chiper
 
 Play Raw file
 https://www.audacityteam.org/download/windows/
+
+
+https://www.sweetwater.com/sweetcare/articles/calculating-hard-disk-space-required-for-digital-audio-recording/
