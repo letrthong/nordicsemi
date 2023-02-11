@@ -37,6 +37,8 @@ int sd_card_list_files(char *path);
  */
 int sd_card_write(char const *const filename, char const *const data, size_t *size);
 
+int sd_card_close();
+
 /**@brief Read data from file into the buffer
  *
  * @param[in] filename	Name of the target file for reading, the default location is the

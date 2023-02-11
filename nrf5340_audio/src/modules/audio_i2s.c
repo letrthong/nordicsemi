@@ -53,15 +53,18 @@ static nrfx_i2s_config_t cfg = {
 	.mode = NRF_I2S_MODE_MASTER,
 	.format = NRF_I2S_FORMAT_I2S,
 	.alignment = NRF_I2S_ALIGN_LEFT,
-	.ratio = CONFIG_AUDIO_RATIO,
+	//.ratio = CONFIG_AUDIO_RATIO,
+	.ratio = 128,
 	.mck_setup = 0x66666000,
-#if (CONFIG_AUDIO_BIT_DEPTH_16)
-	.sample_width = NRF_I2S_SWIDTH_16BIT,
-#elif (CONFIG_AUDIO_BIT_DEPTH_32)
+//#if (CONFIG_AUDIO_BIT_DEPTH_16)
+//	.sample_width = NRF_I2S_SWIDTH_16BIT,
+//#elif (CONFIG_AUDIO_BIT_DEPTH_32)
+//	.sample_width = NRF_I2S_SWIDTH_32BIT,
+//#else
+//	.sample_width = NRF_I2S_SWIDTH_32BIT,
+//#error Invalid bit depth selected
+//#endif /* (CONFIG_AUDIO_BIT_DEPTH_16) */
 	.sample_width = NRF_I2S_SWIDTH_32BIT,
-#else
-#error Invalid bit depth selected
-#endif /* (CONFIG_AUDIO_BIT_DEPTH_16) */
 	.channels = NRF_I2S_CHANNELS_STEREO,
 	.clksrc = NRF_I2S_CLKSRC_ACLK,
 	.enable_bypass = false,
@@ -69,7 +72,7 @@ static nrfx_i2s_config_t cfg = {
 
 //ThongLT
 static nrfx_i2s_buffers_t initial_buffers;
-#define I2S_DATA_BLOCK_WORDS 512 
+#define I2S_DATA_BLOCK_WORDS 128
 static bool data_ready_flag = false;
 static uint32_t  m_buffer_rx32u[I2S_DATA_BLOCK_WORDS];
 static  uint32_t  tmp[I2S_DATA_BLOCK_WORDS];
@@ -235,14 +238,15 @@ void audio_system_record_start(){
 	}
 }
 
+static int count = 0;
 void audio_system_record_raw(){
-	 LOG_INF("audio_system_record_raw start\n"); 
+	// LOG_INF("audio_system_record_raw start\n"); 
 	while (!data_ready_flag)
 	{
 		k_sleep(K_MSEC(1));
 		//Wait for data. Since we do not want I2S_DATA_BLOCK_WORDS amount of prints inside the interrupt.
 	}
-	  nrfx_i2s_stop();
+	//  nrfx_i2s_stop();
 	data_ready_flag = false;
 	
 	//size_t  size = I2S_DATA_BLOCK_WORDS;
@@ -250,28 +254,40 @@ void audio_system_record_raw(){
 	connt1 = connt1 +1;
 	if(connt1 >=100){
 		connt1 = 0;
-		LOG_INF("audio_system_record_raw \n"); 
+		LOG_INF("audio_system_record_raw count=%d\n", count); 
 	} 
 	
-	 
+	char buf[I2S_DATA_BLOCK_WORDS*4];
+	size_t size = I2S_DATA_BLOCK_WORDS * 4;
 	for (int i = 0; i < I2S_DATA_BLOCK_WORDS; i++)
 	{
 		uint32_t data = tmp[i];
-		size_t  size = sizeof(uint32_t);
-		char buf[size ];
+		//size_t  size = sizeof(uint32_t);
 		
-		buf[0] =  data   & 0XFF;
-		buf[1] = (data >> 8) & 0XFF;
-		buf[2] = (data >> 16) & 0XFF;
-		buf[3] = (data >> 24) & 0XFF;
 		
-		//LOG_INF("audio_system_record_raw data=[%d] size=%d  i=%d  \n",  data, size, i); 
-		  
-		sd_card_write("test.raw", buf , &size);
+		buf[i*2] =  data   & 0XFF;
+		buf[(i*2)+1] = (data >> 8) & 0XFF;
+		buf[(i*2)+2] = (data >> 16) & 0XFF;
+		buf[(i*2)+3] = (data >> 24) & 0XFF;
+		
+		 //LOG_INF("audio_system_record_raw %x-%x-%x-%x index=%d\n", buf[0], buf[1], buf[2],buf[3], i); 
+		//  k_sleep(K_MSEC(100));
+		 
 		 
 	}
 
-    audio_system_record_start();
+	if (count < 10000) {
+		LOG_INF("audio_system_record_raw store sdcard\n"); 
+		sd_card_write("test.raw", buf, &size);
+	}
+	
+
+    //audio_system_record_start();
 	
 	//k_sleep(K_MSEC(10));
+	count = count + 1;
+	if (count == 10000) {
+		sd_card_close();
+		LOG_INF("audio_system_record_raw  close file\n"); 
+	}
 }

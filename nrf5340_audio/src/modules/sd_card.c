@@ -88,9 +88,12 @@ int sd_card_list_files(char *path)
 	return 0;
 }
 
+static bool isWriting = false;
+static struct fs_file_t f_entry;
+ 
 int sd_card_write(char const *const filename, char const *const data, size_t *size)
 {
-	struct fs_file_t f_entry;
+	
 	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
 	int ret;
 
@@ -98,26 +101,33 @@ int sd_card_write(char const *const filename, char const *const data, size_t *si
 		return -ENODEV;
 	}
 
-	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN) {
-		LOG_ERR("Filename is too long");
-		return -FR_INVALID_NAME;
-	}
+	if(isWriting == false){
+		if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN) {
+			LOG_ERR("Filename is too long");
+			return -FR_INVALID_NAME;
+		}
 
-	strcat(abs_path_name, filename);
-	fs_file_t_init(&f_entry);
+		strcat(abs_path_name, filename);
+		fs_file_t_init(&f_entry);
 
-	ret = fs_open(&f_entry, abs_path_name, FS_O_CREATE | FS_O_WRITE | FS_O_APPEND);
-	if (ret) {
-		LOG_ERR("Create file failed");
-		return ret;
-	}
+		ret = fs_open(&f_entry, abs_path_name, FS_O_CREATE | FS_O_WRITE | FS_O_APPEND);
+		if (ret) {
+			LOG_ERR("Create file failed");
+			return ret;
+		}
 
-	/* If the file exists, moves the file position pointer to the end of the file */
-	ret = fs_seek(&f_entry, 0, FS_SEEK_END);
-	if (ret) {
-		LOG_ERR("Seek file pointer failed");
-		return ret;
+		/* If the file exists, moves the file position pointer to the end of the file */
+		ret = fs_seek(&f_entry, 0, FS_SEEK_END);
+		if (ret) {
+			LOG_ERR("Seek file pointer failed");
+			return ret;
+		}
+
+		isWriting = true;
+     
 	}
+ 
+	
 
 	ret = fs_write(&f_entry, data, *size);
 	if (ret < 0) {
@@ -127,13 +137,24 @@ int sd_card_write(char const *const filename, char const *const data, size_t *si
 
 	*size = ret;
 
+
+	// 	ret = fs_close(&f_entry);
+	// 	if (ret) {
+	// 		LOG_ERR("Close file failed");
+	// 		return ret;
+	// 	}
+	
+	return 0;
+}
+
+int sd_card_close()
+{	
+	int ret;
 	ret = fs_close(&f_entry);
 	if (ret) {
 		LOG_ERR("Close file failed");
 		return ret;
 	}
-
-	return 0;
 }
 
 int sd_card_read(char const *const filename, char *const data, size_t *size)
