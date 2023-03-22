@@ -13,3 +13,6 @@ https://developer.android.com/reference/android/bluetooth/BluetoothCodecConfig
 https://github.com/u-blox/u-blox-sho-OpenCPU/issues/13#issuecomment-1427964303
 
 https://devzone.nordicsemi.com/f/nordic-q-a/96579/record-audio-on-nrf5340-audio 
+
+# Docker 
+https://github.com/zephyrproject-rtos/docker-image
