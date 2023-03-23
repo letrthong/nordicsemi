@@ -6,3 +6,13 @@ https://community.element14.com/products/roadtest/rv/roadtest_reviews/1646/draft
 https://www.youtube.com/watch?v=cXl9fUyW6FM&t=90s
 https://developer.android.com/guide/topics/connectivity/ble-audio/overview
 https://developer.android.com/reference/android/bluetooth/BluetoothCodecConfig
+
+
+
+# Support 
+https://github.com/u-blox/u-blox-sho-OpenCPU/issues/13#issuecomment-1427964303
+
+https://devzone.nordicsemi.com/f/nordic-q-a/96579/record-audio-on-nrf5340-audio 
+
+# Docker 
+https://github.com/zephyrproject-rtos/docker-image

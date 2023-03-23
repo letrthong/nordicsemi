@@ -1,3 +1,8 @@
+
+C:\Users\HP\nrf\applications\nordicsemi\nrf5340_audio
+ west build -b nrf5340_audio_dk_nrf5340_cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DCONF_FILE=prj_release.conf
+ 
+ 
 .. _nrf53_audio_app:
 
 nRF5340 Audio
