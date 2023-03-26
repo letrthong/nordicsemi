@@ -16,3 +16,7 @@ https://devzone.nordicsemi.com/f/nordic-q-a/96579/record-audio-on-nrf5340-audio
 
 # Docker 
 https://github.com/zephyrproject-rtos/docker-image
+
+
+https://community.element14.com/products/roadtest/b/blog/posts/a-nordic-devacadamy-course-on-the-nrfconnect-sdk
+https://github.com/NordicDeveloperAcademy
