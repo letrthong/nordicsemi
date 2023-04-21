@@ -8,7 +8,8 @@ https://developer.android.com/guide/topics/connectivity/ble-audio/overview
 https://developer.android.com/reference/android/bluetooth/BluetoothCodecConfig
 
 
-
+WiFi
+https://github.com/aaron-mohtar-co/Lemon-IoT-Accessories 
 # Support 
 https://github.com/u-blox/u-blox-sho-OpenCPU/issues/13#issuecomment-1427964303
 
