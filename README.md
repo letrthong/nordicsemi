@@ -23,3 +23,7 @@ https://github.com/zephyrproject-rtos/docker-image
 
 https://community.element14.com/products/roadtest/b/blog/posts/a-nordic-devacadamy-course-on-the-nrfconnect-sdk
 https://github.com/NordicDeveloperAcademy
+
+
+# AVR-IoT WA Development Board User Guide
+ https://ww1.microchip.com/downloads/en/DeviceDoc/AVR-IoT-WA-Development-Board-User-Guide-DS50002998B.pdf
